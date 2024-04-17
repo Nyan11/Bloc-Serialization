@@ -9,27 +9,89 @@ Class {
 
 { #category : #serialization }
 BlSerializer class >> materialize: aString [
+
+	^ self materializeFromSton: aString
+]
+
+{ #category : #serialization }
+BlSerializer class >> materializeFromStash: aString [
 	"Materialize a String into a BlElement and return it. Default materializer is STON."
+
 	| blElement |
-	aString isString not ifTrue:[ BlocMaterializationError signal: 'Cannot materialize a no String object into BlElement' ].
+	aString isString not ifTrue: [
+		BlocMaterializationError signal:
+			'Cannot materialize a no String object into BlElement' ].
 	"Try to materialize and catch an error into a BlocMaterialization error"
-	[ blElement := STON fromString: aString ] onErrorDo: [ :e | BlocMaterializationError signal: 'Cannot support Bloc materialization of this String (', e asString, ')' ].
-	blElement ifNil:[ BlocMaterializationError signal: 'Bloc materialization result is nil' ].
+	[ blElement := Stash new materialize: aString ] onErrorDo: [ :e |
+		BlocMaterializationError signal:
+			'Cannot support Bloc materialization of this String (' , e asString
+			, ')' ].
+	blElement ifNil: [
+		BlocMaterializationError signal:
+			'Bloc materialization result is nil' ].
+
+	^ blElement
+]
+
+{ #category : #serialization }
+BlSerializer class >> materializeFromSton: aString [
+	"Materialize a String into a BlElement and return it. Default materializer is STON."
+
+	| blElement |
+	aString isString not ifTrue: [
+		BlocMaterializationError signal:
+			'Cannot materialize a no String object into BlElement' ].
+	"Try to materialize and catch an error into a BlocMaterialization error"
+	[ blElement := STON fromString: aString ] onErrorDo: [ :e |
+		BlocMaterializationError signal:
+			'Cannot support Bloc materialization of this String (' , e asString
+			, ')' ].
+	blElement ifNil: [
+		BlocMaterializationError signal:
+			'Bloc materialization result is nil' ].
 
 	^ blElement
 ]
 
 { #category : #serialization }
 BlSerializer class >> serialize: aBlElementOrABlElementsCollection [
+	^ self serializeAsSton: aBlElementOrABlElementsCollection
+]
+
+{ #category : #serialization }
+BlSerializer class >> serializeAsStash: aBlElementOrABlElementsCollection [
 	"Serialize a BlElement or a list of BlElements into a String using a serializer. Default serializer is STON."
 
 	| string |
-	aBlElementOrABlElementsCollection isCollection 
-		ifTrue: [ self verifyCollection: aBlElementOrABlElementsCollection ] 
+	aBlElementOrABlElementsCollection isCollection
+		ifTrue: [ self verifyCollection: aBlElementOrABlElementsCollection ]
 		ifFalse: [ self verifyElement: aBlElementOrABlElementsCollection ].
-	
+
 	"Try to serialize and catch an error into a BlocSerialization error"
-	[ string := STON toStringPretty: aBlElementOrABlElementsCollection ] onErrorDo: [ :e | BlocSerializationError signal: 'Cannot support serialization of this BlElement (', e asString, ')' ].
+	[ string := Stash new serialize: aBlElementOrABlElementsCollection ]
+		onErrorDo: [ :e |
+			BlocSerializationError signal:
+				'Cannot support serialization of this BlElement (' , e asString
+				, ')' ].
+
+	^ string
+]
+
+{ #category : #serialization }
+BlSerializer class >> serializeAsSton: aBlElementOrABlElementsCollection [
+	"Serialize a BlElement or a list of BlElements into a String using a serializer. Default serializer is STON."
+
+	| string |
+	aBlElementOrABlElementsCollection isCollection
+		ifTrue: [ self verifyCollection: aBlElementOrABlElementsCollection ]
+		ifFalse: [ self verifyElement: aBlElementOrABlElementsCollection ].
+
+	"Try to serialize and catch an error into a BlocSerialization error"
+	[ string := STON toStringPretty: aBlElementOrABlElementsCollection ]
+		onErrorDo: [ :e |
+			BlocSerializationError signal:
+				'Cannot support serialization of this BlElement (' , e asString
+				, ')' ].
 
 	^ string
 ]

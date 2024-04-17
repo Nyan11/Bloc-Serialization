@@ -15,12 +15,13 @@ BlocSerializationBlRopedTextTests >> testMultiplesAttributes [
 
 	self test: origin on: [ :element |
 		| atributeFinder |
-		atributeFinder := origin text attributesFinder.
-		self assert: origin text rope asString equals: 'test'.
+		atributeFinder := element text attributesFinder.
+		self assert: element text rope asString equals: 'test'.
 		self assert: (atributeFinder hasAttributeSuchThat: [ :att |
 				 att class = BlFontSizeAttribute and: [ att size = 120 ] ]).
 		self assert: (atributeFinder hasAttributeSuchThat: [ :att |
-				 att class = BlTextForegroundAttribute and: [ att paint = Color red ] ]) ]
+				 att class = BlTextForegroundAttribute and: [
+					 att paint = Color red ] ]) ]
 ]
 
 { #category : #tests }
@@ -31,7 +32,8 @@ BlocSerializationBlRopedTextTests >> testNoAttributes [
 
 	self
 		test: origin
-		on: [ :element | self assert: origin text rope asString equals: 'test' ]
+		on: [ :element |
+		self assert: element text rope asString equals: 'test' ]
 ]
 
 { #category : #tests }
@@ -44,7 +46,7 @@ BlocSerializationBlRopedTextTests >> testOneAttribute [
 	self
 		test: origin
 		on: [ :element | | atributeFinder |
-			atributeFinder := origin text attributesFinder.
-		self assert: origin text rope asString equals: 'test'.
+			atributeFinder := element text attributesFinder.
+		self assert: element text rope asString equals: 'test'.
 		self assert: (atributeFinder hasAttributeSuchThat: [ :att | att class = BlFontSizeAttribute and: [ att size = 120 ] ] ) ]
 ]
